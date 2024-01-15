@@ -1,6 +1,6 @@
 ## Architecture Diagram
 
-![Architecture Diagram](https://github.com/harsh-viradia/host-laravel-application-aws-beanstalk/assets/140060556/3a8ecebd-3968-4980-846b-5b03782f5502)
+![Architecture Diagram](https://github.com/harsh-viradia/Host-PHP8.1-Laravel-Application-using-Terraform-on-AWS./assets/140060556/64908845-2b11-457e-aa3a-1457038fd176)
 
 
 ## CloudFront and Route53
