@@ -1,0 +1,31 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      php: 8.1
+      
+  pre_build:
+    commands:
+      - php -v
+      - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+      - composer install
+      - cp .env.pipeline .env  or s3 cp s3://Bucket-name//.env .env
+      - chmod 777 storage
+      - chmod -R 777 bootstrap/cache
+      - zip -r school.zip .
+  build:
+    commands:
+      # This phase is left empty as there are no additional build commands in the original .gitlab-ci.yml file
+  post_build:
+    commands:
+      - apt-get update -qy
+      - apt-get install -y awscli
+      - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+      - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+      - export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION
+      - aws s3 cp school.zip s3://elasticbeanstalk-ap-northeast-1-528623263175/school-$CODEBUILD_BUILD_ID.zip
+      - aws elasticbeanstalk create-application-version --application-name yamada-dev-admin-application --version-label school-$CODEBUILD_BUILD_ID --source-bundle S3Bucket=elasticbeanstalk-ap-northeast-1-ACCOUNT-ID,S3Key=school-$CODEBUILD_BUILD_ID.zip
+      - aws elasticbeanstalk update-environment --application-name yamada-dev-admin-application --environment-name Yamada-dev-admin-panel-environment --version-label school-$CODEBUILD_BUILD_ID
+artifacts:
+  files: school.zip
